@@ -1,6 +1,6 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CounterComponent } from './counter/counter/counter.component';
@@ -13,6 +13,10 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { PostsListComponent } from './posts/posts-list/posts-list.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { appReducer } from './store/app.state';
+import { AddPostComponent } from './posts/add-post/add-post.component';
+import { CommonModule } from '@angular/common';
+import { EditPostComponent } from './posts/edit-post/edit-post.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,13 +26,17 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     CustomCounterInputComponent,
     HomeComponent,
     HeaderComponent,
-    PostsListComponent
+    PostsListComponent,
+    AddPostComponent,
+    EditPostComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    CommonModule,
     FormsModule,
-    StoreModule.forRoot({ counter: counterReducer }),
+    ReactiveFormsModule,
+    StoreModule.forRoot(appReducer),
     StoreDevtoolsModule.instrument(
       {
          //maxAge: 25,
