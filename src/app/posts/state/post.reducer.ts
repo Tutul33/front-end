@@ -20,10 +20,13 @@ const _postReducer=createReducer(initialState,
             posts:updatedPosts
         }
     }),
-    on(deletePost,(state,action)=>{
+    on(deletePost,(state,{id})=>{
+        const updatedPosts=state.posts.filter(post=>{
+            return post.id!=id;
+        });
         return{
             ...state,
-            posts:state.posts
+            posts:updatedPosts
         }
     })
     );
