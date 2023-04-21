@@ -22,14 +22,21 @@ constructor(private store:Store<AppState>,private route:ActivatedRoute){
 
 }
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    this.postSubscription?.unsubscribe();
   }
 ngOnInit(): void {
   
   this.route.paramMap.subscribe((params)=>{
     const id=params.get('id');
     this.id=id?.toString();
-    this.postSubscription=this.store.select(getPostById,{id}).subscribe((data)=>{
+
+    //deprecated
+    // this.postSubscription=this.store.select(getPostById,{id}).subscribe((data)=>{
+    //         this.post=data;
+    //         this.setForm();
+    // });
+    //new method with props
+    this.postSubscription=this.store.select(getPostById({id})).subscribe((data)=>{
             this.post=data;
             this.setForm();
     });
