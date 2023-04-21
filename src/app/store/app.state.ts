@@ -11,5 +11,5 @@ export interface AppState{
 //Global Reducer
 export const appReducer={
     counter:counterReducer,
-    post:postReducer
+    posts:postReducer
 }
