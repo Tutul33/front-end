@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
 import { loginStart } from '../state/auth.actions';
 import { Login } from 'src/app/models/login.model';
+import { setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
     //   email: this.loginForm.value.email,
     //   password: this.loginForm.value.password
     // }
+    this.store.dispatch(setLoadingSpinner({status:true}));
     this.store.dispatch(loginStart({email:this.loginForm.value.email,password:this.loginForm.value.password  }));
   }
   showEmailValidtionError(){
