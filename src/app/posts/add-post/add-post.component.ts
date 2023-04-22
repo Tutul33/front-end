@@ -48,7 +48,8 @@ OnAddPost(){
   }
   // console.log(this.postForm.value);
    //this.store.dispatch(addPost,this.postForm.value); 
-   const post:Post={     
+   const post:Post={    
+     id:'', 
      title:this.postForm.controls.title.value,
      description:this.postForm.controls.description.value,
    };

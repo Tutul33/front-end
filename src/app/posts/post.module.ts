@@ -8,28 +8,36 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { StoreModule } from "@ngrx/store";
 import { postReducer } from "./state/post.reducer";
 import { POST_STATE_NAME } from "./state/post.selector";
-const routes:Routes=[
-   {
-    path:'',component:PostsListComponent,
-    children:[
+import { EffectsModule } from "@ngrx/effects";
+import { PostsEffects } from "./state/post.effects";
+const routes: Routes = [
+  {
+    path: '', component: PostsListComponent,
+    children: [
       {
-        path:'add',component:AddPostComponent
+        path: 'add', component: AddPostComponent
       },
       {
-        path:'edit/:id',component:EditPostComponent
+        path: 'edit/:id', component: EditPostComponent
       }
     ]
-   }
+  }
 ];
 @NgModule({
-    declarations:[
-        PostsListComponent,
-        AddPostComponent,
-        EditPostComponent
-    ],
-    imports:[CommonModule,FormsModule,ReactiveFormsModule,RouterModule.forChild(routes),
-    StoreModule.forFeature(POST_STATE_NAME,postReducer)]
+  declarations: [
+    PostsListComponent,
+    AddPostComponent,
+    EditPostComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(routes),
+    StoreModule.forFeature(POST_STATE_NAME, postReducer),
+    EffectsModule.forFeature([PostsEffects])
+  ]
 })
-export class PostModule{
+export class PostModule {
 
 }
