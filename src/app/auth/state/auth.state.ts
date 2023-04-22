@@ -1,8 +1,8 @@
+import { User } from "src/app/models/user.model";
+
 export interface AuthState{
-    email:string,
-    password:string
+    user:User|null;
 }
 export const initialState:AuthState={
-email:'',
-password:''
+user:null
 }
