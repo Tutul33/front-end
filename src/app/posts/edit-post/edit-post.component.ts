@@ -18,7 +18,9 @@ post?:Post|any;
 postForm:FormGroup|any;
 id:string|any;
 postSubscription?:Subscription;
-constructor(private store:Store<AppState>,private route:ActivatedRoute){
+constructor(
+  private store:Store<AppState>,
+  private route:ActivatedRoute){
 
 }
   ngOnDestroy(): void {
