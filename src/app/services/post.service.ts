@@ -38,4 +38,9 @@ export class PostService {
        
         return this.http.delete(url);
     }
+    getPostById(id: string):Observable<Post> {
+        const url=`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts/${id}.json`;
+       
+        return this.http.get<Post>(url);
+    }
 }
