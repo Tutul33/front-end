@@ -10,7 +10,7 @@ export class PostService {
     constructor(private http: HttpClient) { }
     getPosts(): Observable<Post[]> {
         return this.http
-            .get(`https://vue-completecourse.firebaseio.com/posts.json`)
+            .get(`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts.json`)
             .pipe(
                 map((data: any) => {
                     const posts: Post[] = [];
@@ -23,18 +23,19 @@ export class PostService {
             );
     }
     addPost(post: Post): Observable<{ name: string }> {
-        return this.http
-            .post<{ name: string }>(`https://vue-completecourse.firebaseio.com/posts.json`, post);
+        //return this.http.post<{ name: string }>(`https://vue-completecourse.firebaseio.com/posts.json`, post);
+        return this.http.post<{ name: string }>(`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts.json`, post);
     }
     updatePost(post: Post) {
         const postData = {
             [post.id]: { title: post.title, description: post.description }
         }
         return this.http
-            .patch<{ name: string }>(`https://vue-completecourse.firebaseio.com/posts.json`, post);
+            .patch<{ name: string }>(`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts.json`, postData);
     }
     deletePost(id: string) {
-        return this.http.delete(`https://vue-completecourse.firebaseio.com/posts.json?id=${id}`
-        );
+        const url=`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts/${id}.json`;
+       
+        return this.http.delete(url);
     }
 }
