@@ -24,8 +24,7 @@ export class AppComponent implements OnInit {
     this.IsAuthenticated=this.store.select(isAuthenticated);
     this.showLoading=this.store.select(getLoading);
     this.errorMessage=this.store.select(getErrorMessage);
-    this.store.select(getToggle).subscribe((data) => {
-      debugger
+    this.store.select(getToggle).subscribe((data) => {    
       this.isToggled = data;
     });
     this.store.dispatch(autoLogin());

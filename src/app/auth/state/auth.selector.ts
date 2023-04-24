@@ -14,6 +14,6 @@ export const getToken = createSelector(getAuthState, (state) => {
 export const getToggle=createSelector(getAuthState,(state)=>{
     return state.isToggle;
 });
-export const getUser=createSelector(getAuthState,(state)=>{
-    return state.user;
+export const getUserPassChangeInfo=createSelector(getAuthState,(state)=>{
+    return state.userPass;
 });

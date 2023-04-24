@@ -39,7 +39,7 @@ const _authReducer = createReducer(
     on(dycryptKeyToChangePasswordSuccess, (state,action) => {
         return {
             ...state,
-            user: action.user
+            userPass: action.userPass
         }
     })
 );

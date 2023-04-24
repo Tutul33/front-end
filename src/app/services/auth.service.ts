@@ -7,6 +7,7 @@ import { User } from "../models/user.model";
 import { Store } from "@ngrx/store";
 import { AppState } from "../store/app.state";
 import { autoLogOut } from "../auth/state/auth.actions";
+import { changePass } from "../models/changePass.model";
 @Injectable({
     providedIn: 'root'
 })
@@ -34,10 +35,15 @@ export class AuthService {
             { email }
         );
     }
-    decryptPasswordKey(key: string): Observable<User> {
-        return this.http.post<User>(
-            `http://localhost:5207/api/Login/DeycryptLoginPasswordKey`,
-            { key }
+    decryptPasswordKey(key: string): Observable<any> {
+        return this.http.get<any>(
+            `http://localhost:5207/api/Login/DeycryptLoginPasswordKey/${ key }`
+            
+        );
+    }
+    changePassword(model: changePass): Observable<any> {
+        return this.http.post<any>(
+            `http://localhost:5207/api/Login/ChangePassword`,{ model }            
         );
     }
     formatUser(data: AuthResponseData) {

@@ -1,5 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { autoLogOut, autoLogin, dycryptKeyToChangePassword, dycryptKeyToChangePasswordSuccess, loginStart, loginSuccess, setForgotPassword, setForgotPasswordSuccess, setToggle, setToggleSuccess, signupStart, signupSuccess } from './auth.actions';
+import { autoLogOut, autoLogin, dycryptKeyToChangePassword, dycryptKeyToChangePasswordSuccess, loginStart, loginSuccess, setChangePassword, setChangePasswordSuccess, setForgotPassword, setForgotPasswordSuccess, setToggle, setToggleSuccess, signupStart, signupSuccess } from './auth.actions';
 import { Observable, catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { Injectable } from '@angular/core';
@@ -9,6 +9,7 @@ import { setErrorMessage, setLoadingSpinner } from 'src/app/store/Shared/shared.
 import { Router } from '@angular/router';
 import { MessageService } from 'src/app/services/toastr.service';
 import { User } from 'src/app/models/user.model';
+import { changePass } from 'src/app/models/changePass.model';
 @Injectable()
 export class AuthEffects {
     constructor(
@@ -110,15 +111,32 @@ export class AuthEffects {
             ,exhaustMap((action)=>{
                 return this.authServie.decryptPasswordKey(action.key).pipe(
                       map((data:any)=>{
-                        const user = new User(data.email, 
-                            data.idToken, 
-                            data.localId, 
-                            new Date(),
-                            data.firstName,
-                            data.lastName,
-                            data.phone);
-                        return dycryptKeyToChangePasswordSuccess({ user });
+                        const userPass = new changePass(data.user.customerID,'');
+                        return dycryptKeyToChangePasswordSuccess({ userPass});
                       })
+                );
+            })
+        );
+    });
+    changePassword$=createEffect(()=>{
+        return this.action$.pipe(
+            ofType(setChangePassword)
+            ,exhaustMap((action)=>{
+                return this.authServie.changePassword(action.model).pipe(
+                      map((data:any)=>{
+                        this.store.dispatch(setLoadingSpinner({status:false}))
+                        if (data.isSuccess) {
+                            this,this.messageService.showSuccessMessage(data.message);
+                        }else{
+                            this,this.messageService.showErrorMessage('Failed to change password.Please try again.');
+                        }
+                        return setChangePasswordSuccess();
+                      }), catchError((errorRes) => {
+                        this.store.dispatch(setLoadingSpinner({ status: false }))
+                        this.messageService.showErrorMessage('Failed to change the message.Please try again.');  
+                        const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
+                        return of(setErrorMessage({ message: errorMessage }));
+                    })
                 );
             })
         );

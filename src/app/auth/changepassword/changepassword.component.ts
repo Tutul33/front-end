@@ -3,39 +3,40 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { User } from 'src/app/models/user.model';
 import { AppState } from 'src/app/store/app.state';
-import { dycryptKeyToChangePassword } from '../state/auth.actions';
+import { dycryptKeyToChangePassword, setChangePassword } from '../state/auth.actions';
 import { Subscription } from 'rxjs';
-import { getUser } from '../state/auth.selector';
+import { getUserPassChangeInfo } from '../state/auth.selector';
 import { ActivatedRoute } from '@angular/router';
+import { changePass } from 'src/app/models/changePass.model';
+import { setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 
 @Component({
   selector: 'app-changepassword',
   templateUrl: './changepassword.component.html',
   styleUrls: ['./changepassword.component.css']
 })
-export class ChangepasswordComponent implements OnInit,OnDestroy {
-  changePassform: FormGroup | any;  
-  user: User | any;
+export class ChangepasswordComponent implements OnInit, OnDestroy {
+  changePassform: FormGroup | any;
+  user: changePass | any;
   changePassKey: string = "";
   response: any;
   postSubscription?: Subscription;
-  constructor(private store: Store<AppState>,private route:ActivatedRoute) { }
+  constructor(private store: Store<AppState>, private route: ActivatedRoute) { }
   ngOnDestroy(): void {
     this.postSubscription?.unsubscribe();
   }
   ngOnInit(): void {
     this.createForm();
-    this.route.queryParams
-  .subscribe(params => {
-    this.response=params;
-    this.changePassKey=this.response.key;
-  }
-);
-    this.store.dispatch(dycryptKeyToChangePassword({key:this.changePassKey}));
-    this.postSubscription = this.store.select(getUser).subscribe((user: any) => {
+    this.route.queryParams.subscribe(params => {
+      this.response = params;
+      this.changePassKey = this.response.key;
+    }
+    );
+    this.store.dispatch(dycryptKeyToChangePassword({ key: this.changePassKey }));
+    this.postSubscription = this.store.select(getUserPassChangeInfo).subscribe((user: any) => {
       if (user) {
         debugger
-        this.user = user;        
+        this.user = user;
       }
     })
   }
@@ -47,12 +48,16 @@ export class ChangepasswordComponent implements OnInit,OnDestroy {
     });
   }
   onSubmit() {
-
+    if (!this.changePassform.valid) {
+      return;
+    }
+    const userPassModel=new changePass(this.user.customerId,this.changePassform.value.password);
+     this.store.dispatch(setLoadingSpinner({status:true}))
+     this.store.dispatch(setChangePassword({model:userPassModel}));
   }
   showPasswordValidtionError() {
     const passwordForm = this.changePassform.get('password');
-    if(passwordForm.touched && !passwordForm.valid)
-     {
+    if (passwordForm.touched && !passwordForm.valid) {
       if (passwordForm.errors.required) {
         return 'Password is required.';
       }
