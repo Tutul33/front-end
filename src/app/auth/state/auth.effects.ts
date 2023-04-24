@@ -7,8 +7,6 @@ import { AppState } from 'src/app/store/app.state';
 import { Store } from '@ngrx/store';
 import { setErrorMessage, setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 import { Router } from '@angular/router';
-import { ROUTER_NAVIGATION, RouterNavigatedAction } from '@ngrx/router-store';
-import { User } from 'src/app/models/user.model';
 @Injectable()
 export class AuthEffects {
     constructor(
