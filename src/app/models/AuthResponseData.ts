@@ -1,5 +1,4 @@
-export interface AuthResponseData{
-    
+export interface AuthResponseData{    
         kind: string;
         localId: string;
         email: string;
@@ -7,6 +6,6 @@ export interface AuthResponseData{
         idToken: string;
         registered: boolean,
         refreshToken: string;
-        expiresIn: string;
-      
+        expiresIn: string;      
+        authKey: string;      
 }

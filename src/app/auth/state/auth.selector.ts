@@ -11,3 +11,9 @@ export const isAuthenticated = createSelector(getAuthState, (state) => {
 export const getToken = createSelector(getAuthState, (state) => {
     return state.user ? state.user.userToken : null;
 });
+export const getToggle=createSelector(getAuthState,(state)=>{
+    return state.isToggle;
+});
+export const getUser=createSelector(getAuthState,(state)=>{
+    return state.user;
+});

@@ -1,5 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { autoLogOut, autoLogin, loginStart, loginSuccess, signupStart, signupSuccess } from './auth.actions';
+import { autoLogOut, autoLogin, dycryptKeyToChangePassword, dycryptKeyToChangePasswordSuccess, loginStart, loginSuccess, setForgotPassword, setForgotPasswordSuccess, setToggle, setToggleSuccess, signupStart, signupSuccess } from './auth.actions';
 import { Observable, catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { Injectable } from '@angular/core';
@@ -7,11 +7,14 @@ import { AppState } from 'src/app/store/app.state';
 import { Store } from '@ngrx/store';
 import { setErrorMessage, setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 import { Router } from '@angular/router';
+import { MessageService } from 'src/app/services/toastr.service';
+import { User } from 'src/app/models/user.model';
 @Injectable()
 export class AuthEffects {
     constructor(
         private action$: Actions,
         private authServie: AuthService,
+        private messageService: MessageService,
         private store: Store<AppState>,
         private route: Router) {
 
@@ -81,6 +84,45 @@ export class AuthEffects {
             })
         );
     });
+    sendEmailToChangePassword$ = createEffect(() => {
+        return this.action$.pipe(
+            ofType(setForgotPassword),
+            exhaustMap((action) => {
+                return this.authServie.sendEmailToChangePassword(action.email).pipe(
+                    map((data) => {
+                        this.store.dispatch(setLoadingSpinner({ status: false }));    
+                        this.store.dispatch(setErrorMessage({ message: '' }))    
+                        this.messageService.showSuccessMessage('Email is sent','Email!');      
+                        return setForgotPasswordSuccess({ isSent:true });
+                    }), catchError((errorRes) => {
+                        this.store.dispatch(setLoadingSpinner({ status: false }))
+                        this.messageService.showErrorMessage('Failed to send the message.Please try again.');  
+                        const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
+                        return of(setErrorMessage({ message: errorMessage }));
+                    })
+                )
+            })
+        );
+    });
+    decryptPasswordSuccess$=createEffect(()=>{
+        return this.action$.pipe(
+            ofType(dycryptKeyToChangePassword)
+            ,exhaustMap((action)=>{
+                return this.authServie.decryptPasswordKey(action.key).pipe(
+                      map((data:any)=>{
+                        const user = new User(data.email, 
+                            data.idToken, 
+                            data.localId, 
+                            new Date(),
+                            data.firstName,
+                            data.lastName,
+                            data.phone);
+                        return dycryptKeyToChangePasswordSuccess({ user });
+                      })
+                );
+            })
+        );
+    });
     autoLogin$ = createEffect(() => {
         return this.action$.pipe(
             ofType(autoLogin),
@@ -100,5 +142,16 @@ export class AuthEffects {
             }
             ));
     }, { dispatch: false });
-   
+    //To update any value to every componet, mergeMap is used
+    setToggleEffect$ = createEffect(
+        () => {
+            return this.action$.pipe(ofType(setToggle),
+                mergeMap((action) => {
+                    const isToggle=action.isToggle;
+                    this.authServie.setToggleDataInLocalStorage(isToggle);
+                    return of(setToggleSuccess({ isToggle: isToggle }));
+                })
+            )
+        }
+    );
 }

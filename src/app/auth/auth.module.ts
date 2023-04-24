@@ -7,6 +7,7 @@ import { EffectsModule } from "@ngrx/effects";
 import { AuthEffects } from "./state/auth.effects";
 import { SignupComponent } from './signup/signup.component';
 import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
+import { ChangepasswordComponent } from './changepassword/changepassword.component';
 const routes:Routes=[
     {
         path:'',
@@ -22,6 +23,9 @@ const routes:Routes=[
             },
             {
                 path:'forgotpassword',component:ForgotpasswordComponent
+            },
+            {
+                path:'changepassword',component:ChangepasswordComponent
             }
         ]
     }
@@ -30,7 +34,8 @@ const routes:Routes=[
     declarations:[
     LoginComponent,
     SignupComponent,
-    ForgotpasswordComponent
+    ForgotpasswordComponent,
+    ChangepasswordComponent
   ],
     imports:[
         CommonModule,

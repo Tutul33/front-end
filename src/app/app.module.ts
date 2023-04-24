@@ -2,6 +2,9 @@ import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
@@ -30,6 +33,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     CommonModule,
     FormsModule,
     HttpClientModule,
@@ -38,18 +42,23 @@ import { FooterComponent } from './shared/components/footer/footer.component';
     StoreModule.forRoot(appReducer),
     StoreDevtoolsModule.instrument(
       {
-         //maxAge: 25,
-         logOnly: !isDevMode() 
+        //maxAge: 25,
+        logOnly: !isDevMode()
       }
-      ),
-      StoreRouterConnectingModule.forRoot({
-        serializer:CustomSerializer
-      })
+    ),
+    StoreRouterConnectingModule.forRoot({
+      serializer: CustomSerializer
+    }),
+    ToastrModule.forRoot({
+      timeOut: 2000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [{
-    provide:HTTP_INTERCEPTORS,
-    useClass:AuthTokenInterceptor,
-    multi:true
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthTokenInterceptor,
+    multi: true
   }],
   bootstrap: [AppComponent]
 })

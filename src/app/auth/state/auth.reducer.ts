@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialState } from "./auth.state";
-import { autoLogOut, loginSuccess, signupStart, signupSuccess } from "./auth.actions";
+import { autoLogOut, dycryptKeyToChangePasswordSuccess, loginSuccess, setForgotPasswordSuccess, setToggleSuccess, signupSuccess } from "./auth.actions";
 
 const _authReducer = createReducer(
     initialState,
@@ -21,6 +21,25 @@ const _authReducer = createReducer(
         return {
             ...state,
             user: null
+        }
+    }),
+    on(setToggleSuccess, (state,action) => {
+        return {
+            ...state,
+            isToggle: action.isToggle
+        }
+    }),
+    on(setForgotPasswordSuccess, (state,action) => {
+        return {
+            ...state,
+            isSent: action.isSent
+        }
+    })
+    ,
+    on(dycryptKeyToChangePasswordSuccess, (state,action) => {
+        return {
+            ...state,
+            user: action.user
         }
     })
 );

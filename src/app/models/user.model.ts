@@ -3,7 +3,10 @@ export class User{
         private eamil:string,
         private token:string,
         private localId:string,
-        private expirationDate:Date
+        private expirationDate:Date,
+        private firstName:string,
+        private lastName:string,
+        private phone:string,
         ){
 
     }

@@ -21,15 +21,28 @@ export class AuthService {
             { email, password, returnSecureToken: true }
         );
     }
+    
     signup(email: string, password: string): Observable<AuthResponseData> {
         return this.http.post<AuthResponseData>(
             `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.FIREBASE_API_KEY}`,
             { email, password, returnSecureToken: true }
         );
     }
+    sendEmailToChangePassword(email: string): Observable<AuthResponseData> {
+        return this.http.post<AuthResponseData>(
+            `http://localhost:5207/api/Login/SendEmailToChangePassword`,
+            { email }
+        );
+    }
+    decryptPasswordKey(key: string): Observable<User> {
+        return this.http.post<User>(
+            `http://localhost:5207/api/Login/DeycryptLoginPasswordKey`,
+            { key }
+        );
+    }
     formatUser(data: AuthResponseData) {
         const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
-        const user = new User(data.email, data.idToken, data.localId, expirationDate);
+        const user = new User(data.email, data.idToken, data.localId, expirationDate,'','','');
         return user;
     }
     getErrorMessage(message: string) {
@@ -48,6 +61,9 @@ export class AuthService {
         localStorage.setItem('userData', JSON.stringify(user));
         this.runTimeOutInterval(user);
     }
+    setToggleDataInLocalStorage(isToggle: boolean) {
+        localStorage.setItem('sb|sidebar-toggle', JSON.stringify(isToggle));
+    }
     runTimeOutInterval(user: User) {
         const todaysDate = new Date().getTime();
         const expirationDate = user.expireDate.getDate();
@@ -62,7 +78,7 @@ export class AuthService {
         if (userDataString) {
             const userData = JSON.parse(userDataString);
             const expirationDate = new Date(userData.expirationDate);
-            const user = new User(userData.email, userData.token, userData.localId, expirationDate);
+            const user = new User(userData.email, userData.token, userData.localId, expirationDate,'','','');
             this.runTimeOutInterval(user);
             return user;
         }

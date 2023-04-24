@@ -9,7 +9,7 @@
   </div>
 </div> -->
 <app-loading-spinner *ngIf="showLoading | async"></app-loading-spinner>
-<div id="fixAdminNavToggle" *ngIf="(IsAuthenticated | async)">
+<div id="fixAdminNavToggle" *ngIf="(IsAuthenticated | async)" [ngClass]="{'sb-nav-fixed': !isToggled,'sb-nav-fixed sb-sidenav-toggled': isToggled }">
   <app-header></app-header>
   <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
