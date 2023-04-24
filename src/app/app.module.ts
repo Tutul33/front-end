@@ -16,12 +16,16 @@ import { AuthEffects } from './auth/state/auth.effects';
 import { AuthTokenInterceptor } from './services/AuthToken.Interceptor';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { CustomSerializer } from './router/custom-seralizer';
+import { SideNavComponent } from './shared/components/side-nav/side-nav.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     HeaderComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    SideNavComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

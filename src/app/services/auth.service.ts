@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AuthResponseData } from "../models/AuthResponseData";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { User } from "../models/user.model";
 import { Store } from "@ngrx/store";
 import { AppState } from "../store/app.state";
@@ -66,8 +66,9 @@ export class AuthService {
             this.runTimeOutInterval(user);
             return user;
         }
-        return new User('', '', '', new Date());
+        return null;
     }
+    
     logout() {
         localStorage.removeItem('userData');
         if (this.timeOutInterval) {

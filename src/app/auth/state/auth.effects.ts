@@ -1,12 +1,14 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { autoLogOut, autoLogin, loginStart, loginSuccess, signupStart, signupSuccess } from './auth.actions';
-import { catchError, exhaustMap, map, mergeMap, of, tap } from 'rxjs';
+import { Observable, catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { Injectable } from '@angular/core';
 import { AppState } from 'src/app/store/app.state';
 import { Store } from '@ngrx/store';
 import { setErrorMessage, setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 import { Router } from '@angular/router';
+import { ROUTER_NAVIGATION, RouterNavigatedAction } from '@ngrx/router-store';
+import { User } from 'src/app/models/user.model';
 @Injectable()
 export class AuthEffects {
     constructor(
@@ -100,4 +102,5 @@ export class AuthEffects {
             }
             ));
     }, { dispatch: false });
+   
 }

@@ -5,11 +5,14 @@ import { AuthGuard } from './services/auth.guard';
 import { SinglePostComponent } from './posts/single-post/single-post.component';
 const routes: Routes = [
   {
-    path:'',component:HomeComponent
+    path:'',
+    component:HomeComponent,
+    canActivate:[AuthGuard]
   },
   {
     path:'counter',
     loadChildren:()=>import('./counter/counter.module').then((m)=>m.CounterModule),
+    canActivate:[AuthGuard]
   },
   {
     path:'posts',
@@ -18,7 +21,8 @@ const routes: Routes = [
   },
   {
     path:'posts/details/:id',
-    component:SinglePostComponent
+    component:SinglePostComponent,
+    canActivate:[AuthGuard]
   },
   {
     path:'auth',

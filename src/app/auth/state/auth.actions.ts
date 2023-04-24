@@ -10,7 +10,7 @@ export const LOGIN_OUT_ACTION='[Auth page] Auto Log OUT';
 
 
 export const loginStart=createAction(LOGIN_START,props<{email:string,password:string}>());
-export const loginSuccess=createAction(LOGIN_SUCCESS,props<{user:User,redirect:boolean}>());
+export const loginSuccess=createAction(LOGIN_SUCCESS,props<{user:User|null,redirect:boolean}>());
 
 export const signupStart=createAction(SIGNUP_START,props<{email:string,password:string}>());
 export const signupSuccess=createAction(SIGNUP_SUCCESS,props<{user:User,redirect:boolean}>());

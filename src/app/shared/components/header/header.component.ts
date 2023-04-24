@@ -21,4 +21,13 @@ export class HeaderComponent implements OnInit {
     event.preventDefault();
     this.store.dispatch(autoLogOut());
   }
+
+  user:any;
+  logout(){
+    
+  }
+  isToggled: boolean=false;
+  toggleSideNav(){
+    this.isToggled = !this.isToggled;
+  }
 }
