@@ -1,5 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { autoLogOut, autoLogin, dycryptKeyToChangePassword, dycryptKeyToChangePasswordSuccess, loginStart, loginSuccess, setChangePassword, setChangePasswordSuccess, setForgotPassword, setForgotPasswordSuccess, setToggle, setToggleSuccess, signupStart, signupSuccess } from './auth.actions';
+import { autoLogOut, autoLogin, dycryptKeyToChangePassword, dycryptKeyToChangePasswordSuccess, loginFail, loginStart, loginSuccess, loginSuccessfirebase, setChangePassword, setChangePasswordFailed, setChangePasswordSuccess, setForgotPassword, setForgotPasswordSuccess, setToggle, setToggleSuccess, signupStart, signupSuccess } from './auth.actions';
 import { Observable, catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { Injectable } from '@angular/core';
@@ -28,9 +28,16 @@ export class AuthEffects {
                     map((data) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
                         this.store.dispatch(setErrorMessage({ message: '' }))
-                        const user = this.authServie.formatUser(data);
-                        this.authServie.setUserInLocalStorage(user);
-                        return loginSuccess({ user ,redirect:true});
+                        if (data.isSuccess) {
+                            const user = this.authServie.formatUser(data);
+                            this.authServie.setUserInLocalStorage(user);
+                            this.messageService.showSuccessMessage('Login successfully.');
+                            return loginSuccess({ user, redirect: true });                            
+                        } else {
+                            this.messageService.showErrorMessage('Login failed.Please try again.');
+                            return loginFail();
+                        }
+                       
                     }),
                     catchError((errorRes) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
@@ -40,6 +47,26 @@ export class AuthEffects {
                 )
             }))
     })
+    // loginFirebase$ = createEffect(() => {
+    //     return this.action$.pipe(
+    //         ofType(loginStart),
+    //         exhaustMap((action) => {
+    //             return this.authServie.loginFirebase(action.email, action.password).pipe(
+    //                 map((data) => {
+    //                     this.store.dispatch(setLoadingSpinner({ status: false }))
+    //                     this.store.dispatch(setErrorMessage({ message: '' }))
+    //                     const user = this.authServie.formatFirebaseUser(data);
+    //                     this.authServie.setUserInLocalStorageFirebase(user);
+    //                     return loginSuccessfirebase({ user, redirect: true });
+    //                 }),
+    //                 catchError((errorRes) => {
+    //                     this.store.dispatch(setLoadingSpinner({ status: false }))
+    //                     const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
+    //                     return of(setErrorMessage({ message: errorMessage }));
+    //                 })
+    //             )
+    //         }))
+    // })
     loginRedirect$ = createEffect(
         () => {
             return this.action$.pipe(ofType(...[loginSuccess, signupSuccess]),
@@ -48,7 +75,18 @@ export class AuthEffects {
                     if (action.redirect) {
                         this.route.navigate(['/']);
                     }
-                    
+
+                })
+            )
+        }, {
+        dispatch: false
+    }
+    );
+    loginFailRedirect$ = createEffect(
+        () => {
+            return this.action$.pipe(ofType(loginFail),
+                tap((action) => {                   
+                        this.route.navigate(['auth']); 
                 })
             )
         }, {
@@ -67,15 +105,33 @@ export class AuthEffects {
     //     dispatch:false
     // }
     // );
+    // signUpFirebase$ = createEffect(() => {
+    //     return this.action$.pipe(
+    //         ofType(signupStart),
+    //         exhaustMap((action) => {
+    //             return this.authServie.signup(action.email, action.password).pipe(
+    //                 map((data) => {
+    //                     this.store.dispatch(setLoadingSpinner({ status: false }))
+    //                     const user = this.authServie.formatFirebaseUser(data);
+    //                     return signupSuccess({ user, redirect: true });
+    //                 }), catchError((errorRes) => {
+    //                     this.store.dispatch(setLoadingSpinner({ status: false }))
+    //                     const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
+    //                     return of(setErrorMessage({ message: errorMessage }));
+    //                 })
+    //             )
+    //         })
+    //     );
+    // });
     signUp$ = createEffect(() => {
         return this.action$.pipe(
             ofType(signupStart),
             exhaustMap((action) => {
-                return this.authServie.signup(action.email, action.password).pipe(
+                return this.authServie.signup(action.user).pipe(
                     map((data) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
                         const user = this.authServie.formatUser(data);
-                        return signupSuccess({ user,redirect:true });
+                        return signupSuccess({ user, redirect: true });
                     }), catchError((errorRes) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
                         const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
@@ -91,13 +147,19 @@ export class AuthEffects {
             exhaustMap((action) => {
                 return this.authServie.sendEmailToChangePassword(action.email).pipe(
                     map((data) => {
-                        this.store.dispatch(setLoadingSpinner({ status: false }));    
-                        this.store.dispatch(setErrorMessage({ message: '' }))    
-                        this.messageService.showSuccessMessage('Email is sent','Email!');      
-                        return setForgotPasswordSuccess({ isSent:true });
+                        this.store.dispatch(setLoadingSpinner({ status: false }));
+                        this.store.dispatch(setErrorMessage({ message: '' }));
+                        debugger
+                        if (data.isSuccess) {
+                            this.messageService.showSuccessMessage('Email is sent', 'Email!');
+                        } else {
+                            this.messageService.showErrorMessage('Email is failed to sent.Please try again.');
+                        }
+
+                        return setForgotPasswordSuccess({ isSent: true });
                     }), catchError((errorRes) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
-                        this.messageService.showErrorMessage('Failed to send the message.Please try again.');  
+                        this.messageService.showErrorMessage('Failed to send the message.Please try again.');
                         const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
                         return of(setErrorMessage({ message: errorMessage }));
                     })
@@ -105,35 +167,44 @@ export class AuthEffects {
             })
         );
     });
-    decryptPasswordSuccess$=createEffect(()=>{
+    decryptPasswordSuccess$ = createEffect(() => {
         return this.action$.pipe(
             ofType(dycryptKeyToChangePassword)
-            ,exhaustMap((action)=>{
+            , exhaustMap((action) => {
                 return this.authServie.decryptPasswordKey(action.key).pipe(
-                      map((data:any)=>{
-                        const userPass = new changePass(data.user.customerID,'');
-                        return dycryptKeyToChangePasswordSuccess({ userPass});
-                      })
+                    map((data: any) => {
+                        debugger
+                        let userPass = new changePass(0);
+                        if (data.isSuccess) {
+                             userPass = new changePass(data.user.customerID, '',data.user.loginID);
+                             this.messageService.showInfoMessage(data.message, 'Info!');
+                        } else {
+                            this.messageService.showErrorMessage(data.message, 'Warning!');
+                        }
+                        return dycryptKeyToChangePasswordSuccess({ userPass });
+                    })
                 );
             })
         );
     });
-    changePassword$=createEffect(()=>{
+    changePassword$ = createEffect(() => {
         return this.action$.pipe(
             ofType(setChangePassword)
-            ,exhaustMap((action)=>{
+            , exhaustMap((action) => {
                 return this.authServie.changePassword(action.model).pipe(
-                      map((data:any)=>{
-                        this.store.dispatch(setLoadingSpinner({status:false}))
-                        if (data.isSuccess) {
-                            this,this.messageService.showSuccessMessage(data.message);
-                        }else{
-                            this,this.messageService.showErrorMessage('Failed to change password.Please try again.');
-                        }
-                        return setChangePasswordSuccess();
-                      }), catchError((errorRes) => {
+                    map((data: any) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
-                        this.messageService.showErrorMessage('Failed to change the message.Please try again.');  
+                        if (data.isSuccess) {
+                            this.messageService.showSuccessMessage(data.message);
+                            return setChangePasswordSuccess();
+                        } else {
+                            this.messageService.showErrorMessage('Failed to change password.Please try again.');
+                            return setChangePasswordFailed();
+                        }
+                        
+                    }), catchError((errorRes) => {
+                        this.store.dispatch(setLoadingSpinner({ status: false }))
+                        this.messageService.showErrorMessage('Failed to change the message.Please try again.');
                         const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
                         return of(setErrorMessage({ message: errorMessage }));
                     })
@@ -141,12 +212,23 @@ export class AuthEffects {
             })
         );
     });
+    changePasswordSuccessRedirect$ = createEffect(
+        () => {
+            return this.action$.pipe(ofType(setChangePasswordSuccess),
+                tap((action) => {
+                    this.route.navigate(['auth']);
+                })
+            )
+        }, {
+        dispatch: false
+    }
+    );
     autoLogin$ = createEffect(() => {
         return this.action$.pipe(
             ofType(autoLogin),
             mergeMap((action) => {
                 const user = this.authServie.getUserFromLocalStorage();
-                return of(loginSuccess({ user ,redirect:false}));
+                return of(loginSuccess({ user, redirect: false }));
             })
         );
     }
@@ -165,7 +247,7 @@ export class AuthEffects {
         () => {
             return this.action$.pipe(ofType(setToggle),
                 mergeMap((action) => {
-                    const isToggle=action.isToggle;
+                    const isToggle = action.isToggle;
                     this.authServie.setToggleDataInLocalStorage(isToggle);
                     return of(setToggleSuccess({ isToggle: isToggle }));
                 })

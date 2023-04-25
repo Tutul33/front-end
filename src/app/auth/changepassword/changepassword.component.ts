@@ -17,7 +17,7 @@ import { setLoadingSpinner } from 'src/app/store/Shared/shared.action';
 })
 export class ChangepasswordComponent implements OnInit, OnDestroy {
   changePassform: FormGroup | any;
-  user: changePass | any;
+  customerId: number=0;
   changePassKey: string = "";
   response: any;
   postSubscription?: Subscription;
@@ -35,8 +35,7 @@ export class ChangepasswordComponent implements OnInit, OnDestroy {
     this.store.dispatch(dycryptKeyToChangePassword({ key: this.changePassKey }));
     this.postSubscription = this.store.select(getUserPassChangeInfo).subscribe((user: any) => {
       if (user) {
-        debugger
-        this.user = user;
+        this.customerId = user.CustomerID;
       }
     })
   }
@@ -51,9 +50,9 @@ export class ChangepasswordComponent implements OnInit, OnDestroy {
     if (!this.changePassform.valid) {
       return;
     }
-    const userPassModel=new changePass(this.user.customerId,this.changePassform.value.password);
-     this.store.dispatch(setLoadingSpinner({status:true}))
-     this.store.dispatch(setChangePassword({model:userPassModel}));
+    const userPassModel = new changePass(this.customerId, this.changePassform.value.password);
+    this.store.dispatch(setLoadingSpinner({ status: true }))
+    this.store.dispatch(setChangePassword({ model: userPassModel }));
   }
   showPasswordValidtionError() {
     const passwordForm = this.changePassform.get('password');
@@ -72,11 +71,21 @@ export class ChangepasswordComponent implements OnInit, OnDestroy {
     const passwordForm = this.changePassform.get('password');
     if (passwordConfirmForm.touched && !passwordConfirmForm.valid) {
       if (passwordConfirmForm.errors.required) {
-        return 'Password is required.';
+        return 'Confirm password is required.';
       }
       if (passwordConfirmForm.errors.minLength) {
         return 'Minimum length of password is 6.';
       }
+      if (passwordConfirmForm.value != passwordForm.value) {
+        return 'Password and confirm password must me same.';
+      }
+    }
+    return '';
+  }
+  checkPasswordValidity() {
+    if (this.changePassform.valid) {
+      const passwordConfirmForm = this.changePassform.get('confirmPassword');
+      const passwordForm = this.changePassform.get('password');
       if (passwordConfirmForm.value != passwordForm.value) {
         return 'Password and confirm password must me same.';
       }

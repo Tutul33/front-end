@@ -7,5 +7,7 @@ export interface AuthResponseData{
         registered: boolean,
         refreshToken: string;
         expiresIn: string;      
-        authKey: string;      
+        authKey: string;            
+        isSuccess:boolean;
+        message:string;
 }

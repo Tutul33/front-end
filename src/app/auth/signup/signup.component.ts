@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
 import { signupStart } from '../state/auth.actions';
 import { setLoadingSpinner } from 'src/app/store/Shared/shared.action';
+import { UserModel } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-signup',
@@ -29,8 +30,21 @@ export class SignupComponent implements OnInit{
     if (!this.signUpFrom.valid) {
       return;
     }
+    const user=new UserModel(
+      '', 
+      0, 
+      0,
+       '',
+       this.signUpFrom.value.password,
+       this.signUpFrom.value.firstName,
+       this.signUpFrom.value.lastName,
+       '',
+       this.signUpFrom.value.email,
+       this.signUpFrom.value.phone,
+       false,
+       new Date());
     this.store.dispatch(setLoadingSpinner({status:true}));
-    this.store.dispatch(signupStart({email:this.signUpFrom.value.email,password:this.signUpFrom.value.password  }));
+    this.store.dispatch(signupStart({user:user }));
   }
   showEmailValidtionError(){
     const emailForm=this.signUpFrom.get('email');

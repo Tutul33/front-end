@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AuthResponseData } from "../models/AuthResponseData";
 import { Observable, of } from "rxjs";
-import { User } from "../models/user.model";
+import { IUserModel, User, UserModel } from "../models/user.model";
 import { Store } from "@ngrx/store";
 import { AppState } from "../store/app.state";
 import { autoLogOut } from "../auth/state/auth.actions";
@@ -16,17 +16,29 @@ export class AuthService {
     constructor(private http: HttpClient,private store:Store<AppState>) {
 
     }
-    login(email: string, password: string): Observable<AuthResponseData> {
+    loginFirebase(email: string, password: string): Observable<AuthResponseData> {
         return this.http.post<AuthResponseData>(
             `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.FIREBASE_API_KEY}`,
             { email, password, returnSecureToken: true }
         );
     }
+    login(email: string, password: string): Observable<IUserModel> {
+        return this.http.post<IUserModel>(
+            `http://localhost:5207/api/login/userlogin`,
+            { userName:email, password}
+        );
+    }
     
-    signup(email: string, password: string): Observable<AuthResponseData> {
+    signupFirbase(email: string, password: string): Observable<AuthResponseData> {
         return this.http.post<AuthResponseData>(
             `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.FIREBASE_API_KEY}`,
             { email, password, returnSecureToken: true }
+        );
+    }
+    signup(model:UserModel): Observable<IUserModel> {
+        return this.http.post<IUserModel>(
+            `http://localhost:5207/api/customer/CreateCustomer`,
+            model
         );
     }
     sendEmailToChangePassword(email: string): Observable<AuthResponseData> {
@@ -43,12 +55,29 @@ export class AuthService {
     }
     changePassword(model: changePass): Observable<any> {
         return this.http.post<any>(
-            `http://localhost:5207/api/Login/ChangePassword`,{ model }            
+            `http://localhost:5207/api/Login/ChangePassword`,model          
         );
     }
-    formatUser(data: AuthResponseData) {
+    formatFirebaseUser(data: AuthResponseData) {
         const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
         const user = new User(data.email, data.idToken, data.localId, expirationDate,'','','');
+        return user;
+    }
+    formatUser(data: IUserModel) {
+        //const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
+        const user=new UserModel(
+            data.token, 
+            data.loginId, 
+            data.customerId,
+             data.userName,
+            data.password,
+             data.firstName,
+             data.lastName,
+             data.fullName,
+             data.email,
+             data.phone,
+             data.isSuccess,
+             data.expireDate);
         return user;
     }
     getErrorMessage(message: string) {
@@ -63,14 +92,26 @@ export class AuthService {
                 return 'Unknown error occured.Please try again.';
         }
     }
-    setUserInLocalStorage(user: User) {
+    setUserInLocalStorageFirebase(user: User) {
+        localStorage.setItem('userData', JSON.stringify(user));
+        this.runTimeOutIntervalFirebase(user);
+    }
+    setUserInLocalStorage(user: UserModel) {
         localStorage.setItem('userData', JSON.stringify(user));
         this.runTimeOutInterval(user);
     }
     setToggleDataInLocalStorage(isToggle: boolean) {
         localStorage.setItem('sb|sidebar-toggle', JSON.stringify(isToggle));
     }
-    runTimeOutInterval(user: User) {
+    runTimeOutInterval(user: UserModel) {
+        const todaysDate = new Date().getTime();
+        //const expirationDate = user.expireDate.getDate();
+        const timeInterval = new Date(user.expireDateData).getDate() - todaysDate;
+        this.timeOutInterval = setTimeout(() => {
+            this.store.dispatch(autoLogOut());
+        }, timeInterval)
+    }
+    runTimeOutIntervalFirebase(user: User) {
         const todaysDate = new Date().getTime();
         const expirationDate = user.expireDate.getDate();
         const timeInterval = expirationDate - todaysDate;
@@ -82,10 +123,34 @@ export class AuthService {
         const userDataString = localStorage.getItem('userData');
 
         if (userDataString) {
+            const data = JSON.parse(userDataString);
+            const expirationDate = new Date(data.expirationDate);
+            const user=new UserModel(
+                data.token, 
+                data.loginId, 
+                data.customerId,
+                 data.userName,
+                data.password,
+                 data.firstName,
+                 data.lastName,
+                 data.fullName,
+                 data.email,
+                 data.phone,
+                 data.isSuccess,
+                 data.expireDate);
+            this.runTimeOutInterval(user);
+            return user;
+        }
+        return null;
+    }
+    getUserFromLocalStorageFirebase() {
+        const userDataString = localStorage.getItem('userData');
+
+        if (userDataString) {
             const userData = JSON.parse(userDataString);
             const expirationDate = new Date(userData.expirationDate);
             const user = new User(userData.email, userData.token, userData.localId, expirationDate,'','','');
-            this.runTimeOutInterval(user);
+            this.runTimeOutIntervalFirebase(user);
             return user;
         }
         return null;

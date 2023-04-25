@@ -1,7 +1,8 @@
 export class changePass{
     constructor(
-        private customerId:number,
-        private password:string
+        private CustomerID:number,
+        private Password?:string,
+        private LoginId?:number
     ){
     }
 }

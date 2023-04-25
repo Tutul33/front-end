@@ -17,7 +17,6 @@ export class AuthTokenInterceptor implements HttpInterceptor{
             (
                 (token)=>
                 {
-                    debugger
                     if (!token) {
                         return next.handle(req);
                     }

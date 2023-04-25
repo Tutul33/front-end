@@ -17,10 +17,13 @@ export class HeaderComponent implements OnInit {
   }
   ngOnInit(): void {
     this.IsAuthenticated = this.store.select(isAuthenticated);
-    this.store.select(getToggle).subscribe((data) => {
-      debugger
-      this.isToggled = data;
-    });
+    if (this.IsAuthenticated) {
+      this.store.select(getToggle).subscribe((data) => {
+        debugger
+        this.isToggled = data;
+      });
+    }
+   
   }
   onLogOut(event: Event) {
     event.preventDefault();

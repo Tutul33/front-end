@@ -1,8 +1,9 @@
 import { changePass } from "src/app/models/changePass.model";
-import { User } from "src/app/models/user.model";
+import { User, UserModel } from "src/app/models/user.model";
 
 export interface AuthState {
-    user: User | null;
+    //user: User | null;
+    user: UserModel | null;
     isToggle: boolean;
     isSent: boolean;
     userPass: changePass | null;
