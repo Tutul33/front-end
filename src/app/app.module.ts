@@ -63,3 +63,4 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

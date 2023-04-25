@@ -20,6 +20,11 @@ const routes: Routes = [
     canActivate:[AuthGuard]
   },
   {
+    path:'users',
+    loadChildren:()=>import('./users/user.module').then((m)=>m.UserModule),
+    canActivate:[AuthGuard]
+  },
+  {
     path:'posts/details/:id',
     component:SinglePostComponent,
     canActivate:[AuthGuard]

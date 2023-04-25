@@ -54,4 +54,13 @@ export class UserModel{
     get userToken() {
         return this.token;
     }
+    get userfirstName() {
+        return this.firstName;
+    }
+    get userLastName() {
+        return this.lastName;
+    }
+    get userFullName() {
+        return this.fullName;
+    }
 }

@@ -3,7 +3,7 @@ import { User, UserModel } from "src/app/models/user.model";
 
 export interface AuthState {
     //user: User | null;
-    user: UserModel | null;
+    user: UserModel | any;
     isToggle: boolean;
     isSent: boolean;
     userPass: changePass | null;
