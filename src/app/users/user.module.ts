@@ -8,6 +8,8 @@ import { UsersEffects } from "./state/users.effects";
 import { StoreModule } from "@ngrx/store";
 import { USER_STATE_NAME } from "./state/users.selector";
 import { userReducer } from "./state/users.reducer";
+
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 const routes:Routes=[
     {
     path:'',
@@ -21,7 +23,10 @@ const routes:Routes=[
         ReactiveFormsModule,
         RouterModule.forChild(routes),
         EffectsModule.forFeature([UsersEffects]),
-        StoreModule.forFeature(USER_STATE_NAME,userReducer)
+        StoreModule.forFeature(USER_STATE_NAME,userReducer),
+
+        //
+        MatSlideToggleModule
     ],
     declarations:[
         UserManagementComponent
