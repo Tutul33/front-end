@@ -15,10 +15,11 @@ export const getUserById =(id:number)=>(
       return users ? users[id] : null;
     }
   ));
-  export const getUserAll =(
+  export const getUserAll =
     createSelector(
       getUserEntities,
       (users) => {
+        debugger
         return users;
       }
-    ));
+    );

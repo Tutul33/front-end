@@ -31,6 +31,7 @@ export class UsersEffects {
             ofType(loadUsers),
             mergeMap((action) => {
                 return this.userService.getUsers().pipe(map((users) => {
+                  
                     return loadUsersSuccess({ users })
                 }));
             })

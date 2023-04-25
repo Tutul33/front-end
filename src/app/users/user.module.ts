@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 import { UserDialogComponent } from "./user-management/add-edit-user/userDialogComponent";
 const routes:Routes=[
     {
@@ -35,7 +37,9 @@ const routes:Routes=[
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        MatDialogModule
+        MatDialogModule,
+        MatPaginatorModule,
+        MatTableModule
     ],
     declarations:[
         UserManagementComponent,

@@ -12,8 +12,7 @@ const _usersReducer = createReducer(initialState,
     on(deleteUserSuccess, (state, { id }) => {
         return userAdapter.removeOne(id,state);
     }),
-    on(loadUsersSuccess, (state, action) => {
-        debugger
+    on(loadUsersSuccess, (state, action) => {        
         return userAdapter.setAll(action.users,state);
     })
     );
