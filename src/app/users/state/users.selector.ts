@@ -8,10 +8,17 @@ export const userSelectors=userAdapter.getSelectors();
 export const getUsers = createSelector(getPostState, userSelectors.selectAll);
 export const getUserEntities = createSelector(getPostState, userSelectors.selectEntities);
 
-export const getPostById =(id:number)=>(
+export const getUserById =(id:number)=>(
   createSelector(
     getUserEntities,
     (users) => {
       return users ? users[id] : null;
     }
   ));
+  export const getUserAll =(
+    createSelector(
+      getUserEntities,
+      (users) => {
+        return users;
+      }
+    ));

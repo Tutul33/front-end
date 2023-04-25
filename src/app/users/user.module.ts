@@ -12,6 +12,9 @@ import { userReducer } from "./state/users.reducer";
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { UserDialogComponent } from "./user-management/add-edit-user/userDialogComponent";
 const routes:Routes=[
     {
     path:'',
@@ -30,10 +33,13 @@ const routes:Routes=[
         //
         MatSlideToggleModule,
         MatButtonModule,
-        MatFormFieldModule
+        MatFormFieldModule,
+        MatInputModule,
+        MatDialogModule
     ],
     declarations:[
-        UserManagementComponent
+        UserManagementComponent,
+        UserDialogComponent
     ]
 })
 export class UserModule{

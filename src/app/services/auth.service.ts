@@ -66,18 +66,18 @@ export class AuthService {
     formatUser(data: IUserModel) {
         //const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
         const user=new UserModel(
-            data.token, 
-            data.loginId, 
-            data.customerId,
-             data.userName,
+            data.token as string, 
+            data.loginId as number, 
+            data.customerId as number,
+             data.userName as string,
             data.password,
              data.firstName,
              data.lastName,
-             data.fullName,
+             data.fullName as string,
              data.email,
              data.phone,
-             data.isSuccess,
-             data.expireDate);
+             data.isSuccess as boolean,
+             data.expireDate as Date);
         return user;
     }
     getErrorMessage(message: string) {

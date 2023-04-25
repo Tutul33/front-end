@@ -27,21 +27,21 @@ export class UserService{
             )
         );
 }
-addUser(user: IUserModel): Observable<{ name: string }> {
-    return this.http.post<{ name: string }>(`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts.json`, user);
+addUser(user: IUserModel): Observable<IUserModel> {
+    let url=`${environment.API_URL}/api/customer/CreateCustomer`;
+    return this.http.post<IUserModel>(url, user);
 }
 updateUser(user: IUserModel) {
+    let url=`${environment.API_URL}/api/customer/UpdateCustomer`;
     return this.http
-        .patch<{ name: string }>(`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts.json`, user);
+        .patch<{ name: string }>(url, user);
 }
 deleteUser(id: number) {
-    const url=`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts/${id}.json`;
-   
+    let url=`${environment.API_URL}/api/customer/DeleteCustomer/${id}`;      
     return this.http.delete(url);
 }
 getUserById(id: number):Observable<IUserModel> {
-    const url=`https://nexkraft-19e75-default-rtdb.firebaseio.com/posts/${id}.json`;
-   
+    let url=`${environment.API_URL}/api/customer/GetCustomerByCustomerID/${id}`;      
     return this.http.get<IUserModel>(url);
 }
 }

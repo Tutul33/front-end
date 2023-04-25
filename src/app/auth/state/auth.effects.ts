@@ -42,6 +42,7 @@ export class AuthEffects {
                     catchError((errorRes) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
                         const errorMessage = this.authServie.getErrorMessage(errorRes.error.error.message);
+                        this.messageService.showErrorMessage('Login failed.Please try again.');
                         return of(setErrorMessage({ message: errorMessage }));
                     })
                 )

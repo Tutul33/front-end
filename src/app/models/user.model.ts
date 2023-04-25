@@ -18,18 +18,18 @@ export class User {
     }
 }
 export interface IUserModel {
-    token: string;
-    loginId: number;
-    customerId: number;
-    userName: string;
+    token?: string;
+    loginId?: number;
+    customerId?: number;
+    userName?: string;
     password: string;
     firstName: string;
     lastName: string;
-    fullName: string;
+    fullName?: string;
     email: string;
     phone: string;
-    isSuccess: boolean;
-    expireDate: Date;
+    isSuccess?: boolean;
+    expireDate?: Date;
 }
 export class UserModel{
     constructor(
