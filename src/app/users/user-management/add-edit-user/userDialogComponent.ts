@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { IUserModel } from "src/app/models/user.model";
 import { setLoadingSpinner } from "src/app/store/Shared/shared.action";
 import { AppState } from "src/app/store/app.state";
-import { addUser } from "../../state/users.action";
+import { addUser, updateUser } from "../../state/users.action";
 
 @Component({
     selector: 'user-dialog',
@@ -33,6 +33,16 @@ import { addUser } from "../../state/users.action";
       this.dialogRef.close();
     }
     createForm(){
+      if (this.data.customerId as number>0) {
+        this.userFrom=new FormGroup({
+          firstName:new FormControl(this.data.firstName,Validators.required),
+          lastName:new FormControl(this.data.lastName,Validators.required),
+          phone:new FormControl(this.data.phone),
+          email:new FormControl(this.data.email,[Validators.required,Validators.email]),
+          password:new FormControl(this.data.password,[Validators.required])
+        });
+      }else{
+        
         this.userFrom=new FormGroup({
           firstName:new FormControl(null,Validators.required),
           lastName:new FormControl(null,Validators.required),
@@ -41,11 +51,13 @@ import { addUser } from "../../state/users.action";
           password:new FormControl('',[Validators.required])
         });
       }
+      }
       onSignUpSubmit(){
         if (!this.userFrom?.valid) {
           return;
         }
         const user:IUserModel={
+          customerId:this.data.customerId as number,
           password: this.userFrom.value.password,
           firstName: this.userFrom.value.firstName,
           lastName: this.userFrom.value.lastName,
@@ -53,7 +65,12 @@ import { addUser } from "../../state/users.action";
           phone: this.userFrom.value.phone
         }
         this.store.dispatch(setLoadingSpinner({status:true}));
-        this.store.dispatch(addUser({user:user }));
+        if (this.data.customerId as number>0) {
+          this.store.dispatch(updateUser({user:user }));
+        } else {
+          this.store.dispatch(addUser({user:user }));
+        }
+        
         //this.dialogRef.close();
       }
       showEmailValidtionError(){

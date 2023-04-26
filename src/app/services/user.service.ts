@@ -49,7 +49,7 @@ addUser(user: IUserModel): Observable<IUserModel> {
 updateUser(user: IUserModel) {
     let url=`${environment.API_URL}/api/customer/UpdateCustomer`;
     return this.http
-        .patch<{ name: string }>(url, user);
+        .put<IUserModel>(url, user);
 }
 deleteUser(id: number) {
     let url=`${environment.API_URL}/api/customer/DeleteCustomer/${id}`;      

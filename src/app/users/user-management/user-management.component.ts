@@ -18,11 +18,16 @@ import { PagerService } from 'src/app/services/paginator.service';
   providers: [PagerService]
 })
 export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy {
-  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phone'];
+  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phone','actions'];
   dataSource: any = [];
   userList?: IUserModel[];
   @ViewChild(MatPaginator) paginator: MatPaginator | any;
   userSubscription: Subscription | any;
+  //Dialog
+  exitAnimationDuration: string="500ms"; 
+  enterAnimationDuration: string="500ms";
+  //Search
+  searchStr:string='';
   //Pagination
   public pageNumber: number = 0;
   public pageSize: number = 5;
@@ -32,27 +37,43 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   public pageStart: number = 0;
   public pageEnd: number = 0;
   public totalRowsInList: number = 0;
-  public isPaging: number = 0;
+  public isPaging: boolean = true;
   public pageSizeList: any = [];
 
   constructor(private store: Store<AppState>, private dialog: MatDialog, private pageService: PagerService) {
     this.pageSizeList = pageService.pageSize();
   }
   ngOnDestroy(): void {
-
     this.userSubscription.unsubscribe();
   }
   ngAfterViewInit(): void {
-
     this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
-    this.loadUser(0, true);
+    this.loadUser(0);
   }
-  loadUser(pageIndex: number, isPaging: boolean) {
+  
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    //this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (filterValue!='') {
+      this.searchStr=filterValue.trim().toLowerCase();
+      this.isPaging=true;
+      this.loadUser(0);
+    }else{
+      this.searchStr='';
+      this.isPaging=true;
+      this.loadUser(0);
+    }
+  }
+  clearAll(){
+    this.searchStr='';
+  }
+  loadUser(pageIndex: number) {
+    this.pageNumber=pageIndex;
     const searchModel: SearchModel = {
-      searching: '',
+      searching: this.searchStr,
       pageNumber: pageIndex,
       pageSize: this.pageSize
     }
@@ -60,7 +81,6 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     this.userSubscription = this.store.select(getUserAll).subscribe((data) => {
       if (data) {
         this.userList = data;
-        debugger
         this.dataSource = new MatTableDataSource<IUserModel>(data);
         this.totalRows = this.userList.length > 0 ? this.userList[0].total as number : 0;
         //paging info start   
@@ -77,11 +97,11 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
           this.pageEnd = (this.pageStart - 1) + this.totalRowsInList;
         }
         //paging info end
-        if (isPaging)
-          this.setPaging(pageIndex, false);
+        if (this.isPaging)
+          this.setPaging(pageIndex, !this.isPaging);
         else
           this.pagedItems = this.userList;
-
+         console.log(this.pager)
       }
     });
   }
@@ -89,24 +109,39 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   setPaging(page: number, isPaging: boolean) {
     this.pager = this.pageService.getPager(this.totalRows, page, this.pageSize);
     if (isPaging) {
-      this.loadUser(page, false);
+      this.loadUser(page);
     }
     else {
       this.pagedItems = this.userList;
     }
   }
-  openDialog(exitAnimationDuration: string, enterAnimationDuration: string): void {
+  addNewUser(){
+    const customer:IUserModel={
+      password: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      customerId:0
+    }
+    this.openDialog(customer);
+  }
+  openDialog(customer:IUserModel): void {
     const dialogRef = this.dialog.open(UserDialogComponent, {
       width: '500px',
-      data: {},
+      data: customer,
       panelClass: 'user-dialog',
-      exitAnimationDuration,
-      enterAnimationDuration
+      exitAnimationDuration:this.exitAnimationDuration,
+      enterAnimationDuration:this.enterAnimationDuration
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadUser(0, true);
+      this.isPaging=true;
+      this.loadUser(0);      
     });
+  }
+  EditUser(event:Event,customer:IUserModel){
+  this.openDialog(customer);
   }
 
 }

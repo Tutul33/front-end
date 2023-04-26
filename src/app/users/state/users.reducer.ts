@@ -6,8 +6,11 @@ const _usersReducer = createReducer(initialState,
     on(addUserSuccess,(state,action)=>{
         return userAdapter.addOne(action.user,state);
     }),
-    on(updateUserSuccess, (state, action) => {
-        return userAdapter.updateOne(action.user,state);
+    on(updateUserSuccess, (state, action) => {  
+        return userAdapter.updateOne(
+            action.user,
+            state
+            );
     }),
     on(deleteUserSuccess, (state, { id }) => {
         return userAdapter.removeOne(id,state);

@@ -69,15 +69,32 @@ export class UsersEffects {
         return this.action$.pipe(
             ofType(updateUser),
             switchMap((action) => {
-                return this.userService.updateUser(action.user).pipe(map((data) => {
-                    const updatedUser: Update<IUserModel> = {
-                        id: action.user.customerId as number,
-                        changes: {
-                            ...action.user
+                return this.userService.updateUser(action.user)
+                .pipe(
+                    map((data) => 
+                    {
+                        this.store.dispatch(setLoadingSpinner({status:false}));
+                        if (data.isSuccess) {
+                            this.messageService.showSuccessMessage('User is created successfully.');
+                        } else {
+                            this.messageService.showErrorMessage('User update is failed.');  
                         }
-                    }
-                    return updateUserSuccess({ user: updatedUser });
-                }))
+                        const updatedUser: Update<IUserModel> = 
+                        {
+                            id: action.user.customerId as number,
+                            changes: {
+                                ...action.user
+                            }
+                        }
+                        return updateUserSuccess({ user: updatedUser });
+                   }),
+                   catchError((errorRes) => {
+                       this.store.dispatch(setLoadingSpinner({ status: false }))
+                       const errorMessage = 'Error occurred.User update is failed.Please try again.';
+                       this.messageService.showErrorMessage('User update is failed.Please try again');
+                       return of(setErrorMessage({ message: errorMessage }));
+                   })
+                )
             })
         );
     });
