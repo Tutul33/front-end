@@ -1,5 +1,6 @@
 import { Update } from "@ngrx/entity";
 import { createAction, props } from "@ngrx/store";
+import { SearchModel } from "src/app/models/search.model";
 import { IUserModel } from "src/app/models/user.model";
 
 export const ADD_USER_ACTION = '[users page] add user';
@@ -22,5 +23,5 @@ export const updateUserSuccess=createAction(UPDATE_USER_SUCCESS,props<{user:Upda
 export const deleteUser=createAction(DELETE_USER_ACTION,props<{id:number}>())
 export const deleteUserSuccess=createAction(DELETE_USER_SUCCESS,props<{id:number}>())
 
-export const loadUsers=createAction(LOAD_USERS);
+export const loadUsers=createAction(LOAD_USERS,props<{search:SearchModel}>());
 export const loadUsersSuccess=createAction(LOAD_USERS_SUCCESS,props<{users:IUserModel[]}>());

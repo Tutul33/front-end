@@ -30,8 +30,7 @@ export class UsersEffects {
         return this.action$.pipe(
             ofType(loadUsers),
             mergeMap((action) => {
-                return this.userService.getUsers().pipe(map((users) => {
-                  
+                return this.userService.getUsers(action.search).pipe(map((users) => {
                     return loadUsersSuccess({ users })
                 }));
             })

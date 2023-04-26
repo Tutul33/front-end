@@ -3,48 +3,97 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
 import { loadUsers } from '../state/users.action';
 import { IUserModel } from 'src/app/models/user.model';
-import { MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UserDialogComponent } from './add-edit-user/userDialogComponent';
 import { Observable, Subscription, map } from 'rxjs';
-import { getUsers } from '../state/users.selector';
+import { getUserAll, getUsers } from '../state/users.selector';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { SearchModel } from 'src/app/models/search.model';
+import { PagerService } from 'src/app/services/paginator.service';
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.css']
+  styleUrls: ['./user-management.component.css'],
+  providers: [PagerService]
 })
-export class UserManagementComponent implements OnInit,AfterViewInit,OnDestroy {
+export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phone'];
-  dataSource:any=[];
+  dataSource: any = [];
   userList?: IUserModel[];
-  userList$?: Observable<IUserModel[]>;
-  @ViewChild(MatPaginator) paginator: MatPaginator|any;
-  userSubscription: Subscription|any;
-  constructor(private store: Store<AppState>, private dialog: MatDialog) {
+  @ViewChild(MatPaginator) paginator: MatPaginator | any;
+  userSubscription: Subscription | any;
+  //Pagination
+  public pageNumber: number = 0;
+  public pageSize: number = 5;
+  public totalRows: number = 0;
+  public pager: any = {};
+  public pagedItems: any = [];
+  public pageStart: number = 0;
+  public pageEnd: number = 0;
+  public totalRowsInList: number = 0;
+  public isPaging: number = 0;
+  public pageSizeList: any = [];
 
+  constructor(private store: Store<AppState>, private dialog: MatDialog, private pageService: PagerService) {
+    this.pageSizeList = pageService.pageSize();
   }
   ngOnDestroy(): void {
-    
+
     this.userSubscription.unsubscribe();
   }
   ngAfterViewInit(): void {
-    
-    this.dataSource.paginator=this.paginator;
+
+    this.dataSource.paginator = this.paginator;
   }
+
   ngOnInit(): void {
-    this.store.dispatch(loadUsers());
-    this.loadUser();
+    this.loadUser(0, true);
   }
-  loadUser() {    
-    this.userList$ = this.store.select(getUsers);
-    this.userSubscription=this.store.select(getUsers).subscribe((data)=>{
-      if (data) {        
-        this.userList=data;   
-        this.userList.sort((a, b)=>{return (b.customerId as number)-(a.customerId as number)});
-        this.dataSource=new MatTableDataSource<IUserModel>(data);
+  loadUser(pageIndex: number, isPaging: boolean) {
+    const searchModel: SearchModel = {
+      searching: '',
+      pageNumber: pageIndex,
+      pageSize: this.pageSize
+    }
+    this.store.dispatch(loadUsers({ search: searchModel }));
+    this.userSubscription = this.store.select(getUserAll).subscribe((data) => {
+      if (data) {
+        this.userList = data;
+        debugger
+        this.dataSource = new MatTableDataSource<IUserModel>(data);
+        this.totalRows = this.userList.length > 0 ? this.userList[0].total as number : 0;
+        //paging info start   
+        this.totalRowsInList = this.userList.length;
+        if (this.pageNumber == 0 || this.pageNumber == 1) {
+          this.pageStart = 1;
+          if (this.totalRowsInList < this.pageSize) {
+            this.pageEnd = this.totalRowsInList;
+          } else {
+            this.pageEnd = this.pageSize;
+          }
+        } else {
+          this.pageStart = (this.pageNumber - 1) * this.pageSize + 1;
+          this.pageEnd = (this.pageStart - 1) + this.totalRowsInList;
+        }
+        //paging info end
+        if (isPaging)
+          this.setPaging(pageIndex, false);
+        else
+          this.pagedItems = this.userList;
+
       }
     });
+  }
+  //Set Page
+  setPaging(page: number, isPaging: boolean) {
+    this.pager = this.pageService.getPager(this.totalRows, page, this.pageSize);
+    if (isPaging) {
+      this.loadUser(page, false);
+    }
+    else {
+      this.pagedItems = this.userList;
+    }
   }
   openDialog(exitAnimationDuration: string, enterAnimationDuration: string): void {
     const dialogRef = this.dialog.open(UserDialogComponent, {
@@ -56,38 +105,9 @@ export class UserManagementComponent implements OnInit,AfterViewInit,OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadUser();
+      this.loadUser(0, true);
     });
   }
 
 }
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
-  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
-  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
-  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
-  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
-  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
-  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
-  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
-  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
-  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
-];

@@ -10,10 +10,7 @@
   button {
     margin-right: 8px;
   }
-  .user-dialog  {
-    position: fixed !important;
-    z-index: 1039 !important;
-}
+  
 table {
   width: 100%;
 }

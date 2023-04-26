@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, map } from "rxjs";
 import { IUserModel } from "../models/user.model";
 import { environment } from "src/environments/environment";
+import { SearchModel } from "../models/search.model";
 
 @Injectable({
     providedIn:'root'
@@ -12,17 +13,31 @@ import { environment } from "src/environments/environment";
 export class UserService{
  constructor(private store:Store<AppState>,private http:HttpClient){
  }   
- getUsers(): Observable<IUserModel[]> {
-    let url=`${environment.API_URL}/api/customer/GetCustomerList`+'?PageNumber=1&PageSize=20';
+ getUsers(search:SearchModel): Observable<IUserModel[]> {
+    let filter='';
+    let url=`${environment.API_URL}/api/customer/GetCustomerList`;
+    if(search.pageNumber!=undefined || search.pageNumber!=null){
+        filter+='PageNumber='+search.pageNumber;
+    }
+    if(search.pageSize){
+        filter+='&PageSize='+search.pageSize;
+    }
+    if (search.searching) {
+        filter+='&search='+search.searching;
+    }
+    if (filter!='') {
+        url=url+'?'+filter;
+    }
     return this.http
         .get(url)
         .pipe(
             map((data: any) => {
-                const posts: IUserModel[] = [];
+                const users: IUserModel[] = [];
                 for (let key in data) {
-                    posts.push({ ...data[key], id: key });
+                    users.push({ ...data[key], id: key });
                 }
-                return posts;
+                const usersList=users.sort().reverse();
+                return usersList;
             }
             )
         );

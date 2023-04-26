@@ -1,3 +1,6 @@
+import { PagingModel } from "./paging.model";
+import { SearchModel } from "./search.model";
+
 export class User {
     constructor(
         private eamil: string,
@@ -17,7 +20,11 @@ export class User {
         return this.token;
     }
 }
-export interface IUserModel {
+export interface UserModels{
+    userList:IUserModel[];
+    total:number;
+}
+export interface IUserModel{
     token?: string;
     loginId?: number;
     customerId?: number;
@@ -30,6 +37,7 @@ export interface IUserModel {
     phone: string;
     isSuccess?: boolean;
     expireDate?: Date;
+    total?:number;
 }
 export class UserModel{
     constructor(

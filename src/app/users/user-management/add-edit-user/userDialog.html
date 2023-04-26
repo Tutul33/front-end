@@ -45,8 +45,8 @@
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data" cdkFocusInitial  color="primary" id="btnCreateUser"
-  [disabled]="!f.valid" (click)="onSignUpSubmit()">Ok</button>
-  <!-- <button mat-raised-button color="primary" id="btnCreateUser"
-                [disabled]="!f.valid" (click)="onSignUpSubmit()">Submit</button> -->
+  <!-- <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial  color="primary" id="btnCreateUser"
+  [disabled]="!f.valid" (click)="onSignUpSubmit()">Ok</button> -->
+  <button mat-raised-button [mat-dialog-close]="data"  color="primary" id="btnCreateUser"
+  [disabled]="!f.valid" (click)="onSignUpSubmit()"><i class="fa fa-save"></i>Save</button> 
 </div>

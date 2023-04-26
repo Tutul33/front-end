@@ -17,9 +17,8 @@ export const getUserById =(id:number)=>(
   ));
   export const getUserAll =
     createSelector(
-      getUserEntities,
+      getUsers,
       (users) => {
-        debugger
-        return users;
+        return users.sort((a, b) => ((a.customerId as number) > (b.customerId as number) ? -1 : 1));
       }
     );
