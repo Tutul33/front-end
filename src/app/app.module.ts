@@ -21,6 +21,7 @@ import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { CustomSerializer } from './router/custom-seralizer';
 import { SideNavComponent } from './shared/components/side-nav/side-nav.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { ErrorInterceptor } from './services/Error.Interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,11 +56,10 @@ import { FooterComponent } from './shared/components/footer/footer.component';
       preventDuplicates: true,
     })
   ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthTokenInterceptor,
-    multi: true
-  }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -54,7 +54,7 @@ import { addUser } from "../../state/users.action";
         }
         this.store.dispatch(setLoadingSpinner({status:true}));
         this.store.dispatch(addUser({user:user }));
-        this.dialogRef.close();
+        //this.dialogRef.close();
       }
       showEmailValidtionError(){
         const emailForm=this.userFrom.get('email');

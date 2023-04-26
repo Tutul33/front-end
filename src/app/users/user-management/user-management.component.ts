@@ -36,15 +36,13 @@ export class UserManagementComponent implements OnInit,AfterViewInit,OnDestroy {
     this.store.dispatch(loadUsers());
     this.loadUser();
   }
-  list: any = [];
   loadUser() {    
     this.userList$ = this.store.select(getUsers);
     this.userSubscription=this.store.select(getUsers).subscribe((data)=>{
-      if (data) {
-        console.log(data)
-        this.userList=data;        
-        debugger
-        this.dataSource=new MatTableDataSource<IUserModel>(this.userList);
+      if (data) {        
+        this.userList=data;   
+        this.userList.sort((a, b)=>{return (b.customerId as number)-(a.customerId as number)});
+        this.dataSource=new MatTableDataSource<IUserModel>(data);
       }
     });
   }
@@ -58,7 +56,7 @@ export class UserManagementComponent implements OnInit,AfterViewInit,OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //this.loadUser();
+      this.loadUser();
     });
   }
 
