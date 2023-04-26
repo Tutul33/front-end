@@ -53,7 +53,7 @@ updateUser(user: IUserModel) {
 }
 deleteUser(id: number) {
     let url=`${environment.API_URL}/api/customer/DeleteCustomer/${id}`;      
-    return this.http.delete(url);
+    return this.http.delete<IUserModel>(url);
 }
 getUserById(id: number):Observable<IUserModel> {
     let url=`${environment.API_URL}/api/customer/GetCustomerByCustomerID/${id}`;      

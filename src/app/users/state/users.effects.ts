@@ -103,6 +103,11 @@ export class UsersEffects {
             ofType(deleteUser),
             switchMap((action) => {
                 return this.userService.deleteUser(action.id).pipe(map((data) => {
+                    if (data.isSuccess) {
+                      this.messageService.showSuccessMessage('User is deleted sucessfully.');  
+                    }else{
+                      this.messageService.showErrorMessage('User delete is failed.');  
+                    }
                     return deleteUserSuccess({ id: action.id });
                 }))
             })

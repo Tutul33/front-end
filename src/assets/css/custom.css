@@ -35,3 +35,6 @@
     position: fixed;
     z-index: 1040 !important;
 }
+.cursor-pointer{
+    cursor: pointer;
+}

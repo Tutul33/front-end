@@ -37,7 +37,7 @@ export class AuthService {
     }
     signup(model:UserModel): Observable<IUserModel> {
         return this.http.post<IUserModel>(
-            `http://localhost:5207/api/customer/CreateCustomer`,
+            `http://localhost:5207/api/login/UserRegistration`,
             model
         );
     }

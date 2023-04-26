@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
-import { loadUsers } from '../state/users.action';
+import { deleteUser, loadUsers } from '../state/users.action';
 import { IUserModel } from 'src/app/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDialogComponent } from './add-edit-user/userDialogComponent';
@@ -135,14 +135,24 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
       enterAnimationDuration:this.enterAnimationDuration
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {      
       this.isPaging=true;
-      this.loadUser(0);      
+      if(customer.customerId as number>0){
+        this.loadUser(this.pageNumber);      
+      }else{
+        this.loadUser(0);      
+      }      
     });
   }
   EditUser(event:Event,customer:IUserModel){
   this.openDialog(customer);
   }
-
+  DeleteUser(event:Event,customer:IUserModel){
+   if (confirm("Are you sure to delete this record?")) {
+    this.store.dispatch(deleteUser({id:customer.customerId as number}));
+    this.isPaging=true;
+    this.loadUser(0);     
+   }
+  }
 }
 

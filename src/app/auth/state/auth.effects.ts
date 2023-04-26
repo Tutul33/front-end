@@ -131,6 +131,7 @@ export class AuthEffects {
                 return this.authServie.signup(action.user).pipe(
                     map((data) => {
                         this.store.dispatch(setLoadingSpinner({ status: false }))
+                        this.messageService.showSuccessMessage('User registration is completed.');
                         const user = this.authServie.formatUser(data);
                         return signupSuccess({ user, redirect: true });
                     }), catchError((errorRes) => {
