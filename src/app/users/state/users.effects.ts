@@ -79,14 +79,14 @@ export class UsersEffects {
                         } else {
                             this.messageService.showErrorMessage('User update is failed.');  
                         }
-                        const updatedUser: Update<IUserModel> = 
-                        {
-                            id: action.user.customerId as number,
-                            changes: {
-                                ...action.user
-                            }
-                        }
-                        return updateUserSuccess({ user: updatedUser });
+                        // const updatedUser: Update<IUserModel> = 
+                        // {
+                        //     id: action.user.customerId as number,
+                        //     changes: {
+                        //         ...action.user
+                        //     }
+                        // }
+                        return updateUserSuccess({ user: action.user });
                    }),
                    catchError((errorRes) => {
                        this.store.dispatch(setLoadingSpinner({ status: false }))
