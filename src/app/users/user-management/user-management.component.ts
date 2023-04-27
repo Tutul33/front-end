@@ -20,7 +20,7 @@ import { PagerService } from 'src/app/services/paginator.service';
 export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phone','actions'];
   dataSource: any = [];
-  userList?: IUserModel[];
+  userList: IUserModel[]=[];
   @ViewChild(MatPaginator) paginator: MatPaginator | any;
   userSubscription: Subscription | any;
   //Dialog
