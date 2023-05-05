@@ -18,7 +18,7 @@ export const addUserSuccess=createAction(ADD_USER_SUCCESS,props<{user:IUserModel
 export const addUserFail=createAction(ADD_USER_FAIL);
 
 export const updateUser=createAction(UPDATE_USER_ACTION,props<{user:IUserModel}>())
-export const updateUserSuccess=createAction(UPDATE_USER_SUCCESS,props<{user:Update<IUserModel>}>())
+export const updateUserSuccess=createAction(UPDATE_USER_SUCCESS,props<{user:IUserModel}>())
 
 export const deleteUser=createAction(DELETE_USER_ACTION,props<{id:number}>())
 export const deleteUserSuccess=createAction(DELETE_USER_SUCCESS,props<{id:number}>())
