@@ -6,6 +6,7 @@ import { IUserModel } from "src/app/models/user.model";
 import { setLoadingSpinner } from "src/app/store/Shared/shared.action";
 import { AppState } from "src/app/store/app.state";
 import { addUser, updateUser } from "../../state/users.action";
+import { getUserEntities } from "../../state/users.selector";
 
 @Component({
     selector: 'user-dialog',
@@ -15,6 +16,7 @@ import { addUser, updateUser } from "../../state/users.action";
   export class UserDialogComponent implements OnInit {
     userFrom?:FormGroup|any;
     title:string="";
+    list: IUserModel[] = [];
     constructor(
       public dialogRef: MatDialogRef<UserDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: IUserModel,
@@ -27,6 +29,11 @@ import { addUser, updateUser } from "../../state/users.action";
       }else{
         this.title='Add';
       }
+      // this.store.select(getUserEntities).subscribe((data)=>{
+      //   if(data){
+      //      this.list=data;
+      //   }
+      // });
     }
   
     onNoClick(): void {
@@ -64,7 +71,9 @@ import { addUser, updateUser } from "../../state/users.action";
           email: this.userFrom.value.email,
           phone: this.userFrom.value.phone
         }
-        this.store.dispatch(setLoadingSpinner({status:true}));
+        //const index=this.list[];
+        //this.store.dispatch(setLoadingSpinner({status:true}));
+        
         if (this.data.customerId as number>0) {
           this.store.dispatch(updateUser({user:user }));
         } else {

@@ -6,7 +6,7 @@ import { IUserModel } from 'src/app/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDialogComponent } from './add-edit-user/userDialogComponent';
 import { Observable, Subscription, map } from 'rxjs';
-import { getUserAll, getUsers } from '../state/users.selector';
+import { getUserAll, getUserEntities, getUsers } from '../state/users.selector';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { SearchModel } from 'src/app/models/search.model';
@@ -50,7 +50,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     this.dataSource.paginator = this.paginator;
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {   
     this.loadUser(0);
   }
   
@@ -101,7 +101,6 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
           this.setPaging(pageIndex, !this.isPaging);
         else
           this.pagedItems = this.userList;
-         console.log(this.pager)
       }
     });
   }
